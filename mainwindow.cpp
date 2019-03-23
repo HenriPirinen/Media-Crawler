@@ -3,6 +3,7 @@
 #include "settings.h"
 #include <QFileDialog>
 #include <QDebug>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -39,4 +40,15 @@ void MainWindow::on_actionCrawling_settings_triggered()
 {
     Settings *settingsDialog = new Settings(this);
     settingsDialog->exec();
+    delete settingsDialog;
+}
+
+void MainWindow::on_actionAbout_Qt_triggered()
+{
+    QMessageBox::aboutQt(this,"About Qt");
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+    QApplication::quit();
 }

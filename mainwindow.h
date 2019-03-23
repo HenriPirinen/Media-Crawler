@@ -22,6 +22,10 @@ private slots:
     void on_actionPause_triggered();
     void on_actionFiles_triggered();
     void on_actionCrawling_settings_triggered();
+    void on_actionAbout_Qt_triggered();
+
+    void on_actionQuit_triggered();
+
 signals:
     void nextItem(int index);
 

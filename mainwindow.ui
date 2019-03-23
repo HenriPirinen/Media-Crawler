@@ -16,10 +16,33 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTextEdit" name="consoleOutput">
-      <property name="enabled">
-       <bool>true</bool>
+     <widget class="QTableWidget" name="infoTable">
+      <property name="rowCount">
+       <number>0</number>
       </property>
+      <property name="columnCount">
+       <number>4</number>
+      </property>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Media ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>URL</string>
+       </property>
+      </column>
      </widget>
     </item>
     <item>
@@ -137,16 +160,31 @@
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/Icons/close.png</normaloff>:/Icons/close.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="toolTip">
+    <string>Quit application</string>
+   </property>
   </action>
   <action name="actionCrawler_algorithm">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/Icons/code.png</normaloff>:/Icons/code.png</iconset>
+   </property>
    <property name="text">
     <string>Crawler algorithm</string>
    </property>
   </action>
   <action name="actionAbout_Qt">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/Icons/info.png</normaloff>:/Icons/info.png</iconset>
+   </property>
    <property name="text">
     <string>About Qt</string>
    </property>

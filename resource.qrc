@@ -4,5 +4,8 @@
         <file>Icons/play.png</file>
         <file>Icons/bug.png</file>
         <file>Icons/folder.png</file>
+        <file>Icons/close.png</file>
+        <file>Icons/info.png</file>
+        <file>Icons/code.png</file>
     </qresource>
 </RCC>
