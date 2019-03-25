@@ -11,6 +11,7 @@
 #include <QSaveFile>
 #include <QSettings>
 #include <QDir>
+#include <QVector>
 
 Crawler::Crawler(QObject *parent) : QObject(parent){
     netManager = new QNetworkAccessManager(this);
@@ -44,6 +45,7 @@ void Crawler::start()
 
 void Crawler::getSource(int id = NULL)
 {
+    qDebug() << id;
     if(id > seqEnd){
         emit finished();
         return;
@@ -75,20 +77,27 @@ void Crawler::parseResult()
             int media_id = map["media_id"].toInt();
             nPages = map["num_pages"].toInt();
 
-            /*QJsonObject titles = map["title"].toJsonObject();
-            QVariantMap titlesMap = titles.toVariantMap();
-            QString titleEnglish = titlesMap["pretty"].toString();*/
-            Crawler::fetchMedia("p",1,media_id);
+            QJsonObject images = map["images"].toJsonObject();
+            QVariantMap imagesMap = images.toVariantMap();
+            QJsonArray pages = imagesMap["pages"].toJsonArray();
+
+            for (int i = pages.size() - 1; i >= 0; i--) {
+                QJsonObject objPage = pages.at(i).toObject();
+                QVariantMap pageMap = objPage.toVariantMap();
+                pageTypes.push_front(pageMap["t"].toString());
+            }
+
+            Crawler::fetchMedia(pageTypes[0],1,media_id);
         }
     }
 }
 
 void Crawler::fetchMedia(QString type, int pNumber, int mediaId)
 {
-    QNetworkRequest req;
     QString fileType = type == "j" ? ".jpg" : ".png";
     QString query = mediaServer + QString::number(mediaId) + "/" + QString::number(pNumber) + fileType;
     QString fileLocation = savePath + "/" + QString::number(seqCurrent) + "/" + QString::number(pNumber) + fileType;
+    QNetworkRequest req;
     req.setUrl(query);
     netReply = netManager->get(req);
     connect(netReply,&QNetworkReply::finished,this,[=](){
@@ -104,11 +113,12 @@ void Crawler::fetchMedia(QString type, int pNumber, int mediaId)
             file.open(QIODevice::WriteOnly);
             file.write((res));
             file.close();
+            pageTypes.pop_front();
             if(pNumber < nPages){
-                Crawler::fetchMedia("p",pNumber + 1,mediaId); //Call itself until every media file is retrivied
+                Crawler::fetchMedia(pageTypes[0],pNumber + 1,mediaId); //Call itself until every media file is retrivied
             } else {
                 emit collectionReceived();
-                //Crawler::getSource(++seqCurrent);
+                Crawler::getSource(++seqCurrent);
             }
         }
     });
