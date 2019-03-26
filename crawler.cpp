@@ -44,7 +44,6 @@ void Crawler::start()
 
 void Crawler::getSource(int id = NULL)
 {
-    qDebug() << id;
     if(id > seqEnd){
         emit finished();
         return;
@@ -83,10 +82,10 @@ void Crawler::parseResult()
             for (int i = pages.size() - 1; i >= 0; i--) {
                 QJsonObject objPage = pages.at(i).toObject();
                 QVariantMap pageMap = objPage.toVariantMap();
-                pageTypes.push_front(pageMap["t"].toString());
+                pageTypes.push(pageMap["t"].toString());
             }
 
-            Crawler::fetchMedia(pageTypes[0],1,media_id);
+            Crawler::fetchMedia(pageTypes.top(),1,media_id);
         }
     }
 }
@@ -112,9 +111,9 @@ void Crawler::fetchMedia(QString type, int pNumber, int mediaId)
             file.open(QIODevice::WriteOnly);
             file.write((res));
             file.close();
-            pageTypes.pop_front();
+            pageTypes.pop();
             if(pNumber < nPages){
-                Crawler::fetchMedia(pageTypes[0],pNumber + 1,mediaId); //Call itself until every media file is retrivied
+                Crawler::fetchMedia(pageTypes.top(),pNumber + 1,mediaId); //Call itself until every media file is retrivied
             } else {
                 emit collectionReceived();
                 Crawler::getSource(++seqCurrent);

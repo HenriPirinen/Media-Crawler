@@ -6,7 +6,6 @@
 #include <QRegularExpression>
 #include <QNetworkReply>
 #include <QStack>
-#include <QVector>
 
 class Crawler : public QObject
 {
@@ -25,7 +24,7 @@ private:
     QUrl url;
     QString mediaServer;
     QString savePath;
-    QVector<QString> pageTypes;
+    QStack<QString> pageTypes;
     int regexSplitStart;
     int regexSplitEnd;
     int nPages;
