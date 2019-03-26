@@ -5,6 +5,7 @@
 #include <QNetworkAccessManager>
 #include <QRegularExpression>
 #include <QNetworkReply>
+#include <QStack>
 #include <QVector>
 
 class Crawler : public QObject

@@ -11,7 +11,6 @@
 #include <QSaveFile>
 #include <QSettings>
 #include <QDir>
-#include <QVector>
 
 Crawler::Crawler(QObject *parent) : QObject(parent){
     netManager = new QNetworkAccessManager(this);

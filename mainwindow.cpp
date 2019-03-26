@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QMessageBox>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -11,8 +12,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->setupUi(this);
 
     crawler = new Crawler();
-    connect(crawler,&Crawler::collectionReceived,this,[](){ qDebug() << "Collection received"; });
-    connect(crawler,&Crawler::finished,this,[](){ qDebug() << "Crawling finished";});
+    currentCollection = 0;
+    connect(crawler,&Crawler::collectionReceived,this,[=](){
+        currentCollection++;
+        ui->progressBar->setValue(currentCollection * 100 / (endIdx - startIdx));
+    });
+    connect(crawler,&Crawler::finished,this,[=](){
+        ui->progressBar->setValue(100);
+    });
 }
 
 MainWindow::~MainWindow()
@@ -23,6 +30,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionStart_triggered()
 {
+    QSettings settings("Regni","Settings");
+    settings.beginGroup("CrawlerConfig");
+    startIdx = settings.value("sequenceStart",QVariant(0)).toInt();
+    endIdx = settings.value("sequenceEnd",QVariant(0)).toInt();
+    currentCollection = 0;
+    ui->progressBar->setValue(0);
     crawler->start();
 }
 

@@ -33,6 +33,9 @@ private:
     Ui::MainWindow *ui;
     QString fileOutputLocation;
     Crawler *crawler;
+    int startIdx;
+    int endIdx;
+    int currentCollection;
 };
 
 #endif // MAINWINDOW_H
