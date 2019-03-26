@@ -35,7 +35,8 @@ HEADERS += \
         mainwindow.h \
     settings.h \
     crawler.h \
-    indexer.h
+    indexer.h \
+    item.h
 
 FORMS += \
         mainwindow.ui \

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "settings.h"
+#include "item.h"
 #include <QFileDialog>
 #include <QDebug>
 #include <QMessageBox>
@@ -10,12 +11,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Media Crawler");
 
+    currentCollectionIdx = 0;
     crawler = new Crawler();
-    currentCollection = 0;
+    connect(crawler,&Crawler::parseCompleted,this,[=](){
+        Item curretItem = crawler->getCurrentItem();
+        qDebug() << curretItem.language;
+    });
     connect(crawler,&Crawler::collectionReceived,this,[=](){
-        currentCollection++;
-        ui->progressBar->setValue(currentCollection * 100 / (endIdx - startIdx));
+        currentCollectionIdx++;
+        ui->progressBar->setValue(currentCollectionIdx * 100 / (endIdx - startIdx));
     });
     connect(crawler,&Crawler::finished,this,[=](){
         ui->progressBar->setValue(100);
@@ -34,7 +40,7 @@ void MainWindow::on_actionStart_triggered()
     settings.beginGroup("CrawlerConfig");
     startIdx = settings.value("sequenceStart",QVariant(0)).toInt();
     endIdx = settings.value("sequenceEnd",QVariant(0)).toInt();
-    currentCollection = 0;
+    currentCollectionIdx = 0;
     ui->progressBar->setValue(0);
     crawler->start();
 }

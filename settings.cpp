@@ -9,6 +9,7 @@ Settings::Settings(QWidget *parent) :
     ui(new Ui::Settings)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Crawler settings");
 
     QSettings settings("Regni","Settings");
     settings.beginGroup("CrawlerConfig");

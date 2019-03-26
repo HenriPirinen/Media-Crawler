@@ -35,7 +35,7 @@ private:
     Crawler *crawler;
     int startIdx;
     int endIdx;
-    int currentCollection;
+    int currentCollectionIdx;
 };
 
 #endif // MAINWINDOW_H

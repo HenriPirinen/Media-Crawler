@@ -72,20 +72,42 @@ void Crawler::parseResult()
             QJsonDocument doc = QJsonDocument::fromJson(rawJson.toUtf8());
             QJsonObject obj = doc.toVariant().toJsonObject();
             QVariantMap map = obj.toVariantMap();
-            int media_id = map["media_id"].toInt();
+
+            int mediaId = map["media_id"].toInt();
+            int uploadDate = map["upload_date"].toInt();
             nPages = map["num_pages"].toInt();
+
+            QJsonObject titles = map["title"].toJsonObject();
+            QVariantMap titlesMap = titles.toVariantMap();
+            QString titlePretty = titlesMap["pretty"].toString();
 
             QJsonObject images = map["images"].toJsonObject();
             QVariantMap imagesMap = images.toVariantMap();
             QJsonArray pages = imagesMap["pages"].toJsonArray();
-
             for (int i = pages.size() - 1; i >= 0; i--) {
                 QJsonObject objPage = pages.at(i).toObject();
                 QVariantMap pageMap = objPage.toVariantMap();
                 pageTypes.push(pageMap["t"].toString());
             }
 
-            Crawler::fetchMedia(pageTypes.top(),1,media_id);
+            QJsonArray tags = map["tags"].toJsonArray();
+            for (int i = 0; i < tags.size(); i++) {
+                QJsonObject objTag = tags.at(i).toObject();
+                QVariantMap tagMap = objTag.toVariantMap();
+                if(tagMap["type"].toString() == "language" && tagMap["name"].toString() != "translated"){
+                    itemInfo.language = tagMap["name"].toString();
+                    break;
+                }
+            }
+
+            itemInfo.id = seqCurrent;
+            itemInfo.mediaId = mediaId;
+            itemInfo.numberOfPages = nPages;
+            itemInfo.uploadDate = uploadDate;
+            itemInfo.title = titlePretty;
+
+            emit parseCompleted();
+            Crawler::fetchMedia(pageTypes.top(),1,mediaId);
         }
     }
 }
@@ -120,4 +142,9 @@ void Crawler::fetchMedia(QString type, int pNumber, int mediaId)
             }
         }
     });
+}
+
+Item Crawler::getCurrentItem()
+{
+    return itemInfo;
 }

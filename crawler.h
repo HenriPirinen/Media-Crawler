@@ -6,6 +6,7 @@
 #include <QRegularExpression>
 #include <QNetworkReply>
 #include <QStack>
+#include "item.h"
 
 class Crawler : public QObject
 {
@@ -16,6 +17,7 @@ public:
     void start();
     void stop();
     void timeout();
+    Item getCurrentItem();
 private:
     QNetworkAccessManager *netManager;
     QNetworkReply *netReply;
@@ -25,6 +27,7 @@ private:
     QString mediaServer;
     QString savePath;
     QStack<QString> pageTypes;
+    Item itemInfo;
     int regexSplitStart;
     int regexSplitEnd;
     int nPages;
@@ -35,6 +38,7 @@ private:
     void parseResult();
     void fetchMedia(QString type, int pNumber, int mediaId);
 signals:
+    void parseCompleted();
     void itemReceived();
     void collectionReceived();
     void finished();

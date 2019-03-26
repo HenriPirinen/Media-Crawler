@@ -30,17 +30,17 @@
       </column>
       <column>
        <property name="text">
-        <string>Media ID</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Title</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>URL</string>
+        <string>Language</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Upload date</string>
        </property>
       </column>
      </widget>
