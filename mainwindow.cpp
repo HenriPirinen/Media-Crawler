@@ -6,19 +6,18 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QSettings>
+#include <QTableWidgetItem>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->infoTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     this->setWindowTitle("Media Crawler");
 
     currentCollectionIdx = 0;
     crawler = new Crawler();
-    connect(crawler,&Crawler::parseCompleted,this,[=](){
-        Item curretItem = crawler->getCurrentItem();
-        qDebug() << curretItem.language;
-    });
+    connect(crawler,&Crawler::parseCompleted,this,&MainWindow::addItem);
     connect(crawler,&Crawler::collectionReceived,this,[=](){
         currentCollectionIdx++;
         ui->progressBar->setValue(currentCollectionIdx * 100 / (endIdx - startIdx));
@@ -70,4 +69,14 @@ void MainWindow::on_actionAbout_Qt_triggered()
 void MainWindow::on_actionQuit_triggered()
 {
     QApplication::quit();
+}
+
+void MainWindow::addItem()
+{
+    Item curretItem = crawler->getCurrentItem();
+    ui->infoTable->insertRow(ui->infoTable->rowCount());
+    ui->infoTable->setItem(ui->infoTable->rowCount() - 1,0, new QTableWidgetItem(QString::number(curretItem.id)));
+    ui->infoTable->setItem(ui->infoTable->rowCount() - 1,1, new QTableWidgetItem(curretItem.title));
+    ui->infoTable->setItem(ui->infoTable->rowCount() - 1,2, new QTableWidgetItem(curretItem.language));
+    ui->infoTable->setItem(ui->infoTable->rowCount() - 1,3, new QTableWidgetItem(QString::number(curretItem.uploadDate)));
 }

@@ -23,7 +23,6 @@ private slots:
     void on_actionFiles_triggered();
     void on_actionCrawling_settings_triggered();
     void on_actionAbout_Qt_triggered();
-
     void on_actionQuit_triggered();
 
 signals:
@@ -36,6 +35,8 @@ private:
     int startIdx;
     int endIdx;
     int currentCollectionIdx;
+private:
+    void addItem();
 };
 
 #endif // MAINWINDOW_H
