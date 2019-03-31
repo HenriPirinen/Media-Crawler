@@ -9,5 +9,6 @@
         <file>Icons/code.png</file>
         <file>Style/style.css</file>
         <file>Icons/add.png</file>
+        <file>Images/CrawlerSimple.png</file>
     </qresource>
 </RCC>
