@@ -24,6 +24,7 @@ Settings::Settings(QWidget *parent) :
     ui->inputStartIndex->setValue(settings.value("sequenceStart",QVariant(0)).toInt());
     ui->inputEndIndex->setValue(settings.value("sequenceEnd",QVariant(0)).toInt());
     ui->inputSaveTo->setText(settings.value("saveTo",QVariant(0)).toString());
+    ui->inputLanguage->setText(settings.value("language",QVariant(0)).toString());
     ui->includeList->addItems(settings.value("include").value<QList<QString>>());
     ui->excludeList->addItems(settings.value("exclude").value<QList<QString>>());
     settings.endGroup();
@@ -56,6 +57,7 @@ void Settings::on_applySettings_clicked()
     settings.setValue("sequenceStart",ui->inputStartIndex->value());
     settings.setValue("sequenceEnd",ui->inputEndIndex->value());
     settings.setValue("saveTo",ui->inputSaveTo->text());
+    settings.setValue("language", ui->inputLanguage->text());
     settings.setValue("include",QVariant::fromValue(includeTags));
     settings.setValue("exclude",QVariant::fromValue(excludeTags));
     settings.endGroup();

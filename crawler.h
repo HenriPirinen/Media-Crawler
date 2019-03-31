@@ -6,6 +6,7 @@
 #include <QRegularExpression>
 #include <QNetworkReply>
 #include <QStack>
+#include <QList>
 #include "item.h"
 
 class Crawler : public QObject
@@ -17,7 +18,7 @@ public:
     void start();
     void stop();
     void timeout();
-    Item getCurrentItem();
+    Item getCurrentItem() const;
 private:
     QNetworkAccessManager *netManager;
     QNetworkReply *netReply;
@@ -26,7 +27,10 @@ private:
     QUrl url;
     QString mediaServer;
     QString savePath;
+    QString itemLanguage;
     QStack<QString> pageTypes;
+    QList<QString> include;
+    QList<QString> exclude;
     Item itemInfo;
     int regexSplitStart;
     int regexSplitEnd;

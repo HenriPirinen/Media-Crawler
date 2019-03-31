@@ -11,6 +11,7 @@
 #include <QSaveFile>
 #include <QSettings>
 #include <QDir>
+#include <QTimer>
 
 Crawler::Crawler(QObject *parent) : QObject(parent){
     netManager = new QNetworkAccessManager(this);
@@ -27,6 +28,8 @@ Crawler::~Crawler()
 
 void Crawler::start()
 {
+    qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
+
     QSettings settings("Regni","Settings");
     settings.beginGroup("CrawlerConfig");
     url = settings.value("url",QVariant(0)).toString();
@@ -37,6 +40,9 @@ void Crawler::start()
     seqCurrent = settings.value("sequenceStart",QVariant(0)).toInt();
     seqEnd = settings.value("sequenceEnd",QVariant(0)).toInt();
     savePath = settings.value("saveTo",QVariant(0)).toString();
+    itemLanguage = settings.value("language",QVariant(0)).toString();
+    include = settings.value("include").value<QList<QString>>();
+    exclude = settings.value("exclude").value<QList<QString>>();
     settings.endGroup();
 
     getSource(seqCurrent);
@@ -61,7 +67,7 @@ void Crawler::getSource(int id = NULL)
 void Crawler::parseResult()
 {
     if(netReply->error()){
-        qDebug() << "Err: " << netReply->errorString();
+        qDebug() << "Err: " << netReply->errorString(); //Todo: Handle error
     } else {
         QRegularExpressionMatch match = regex.match(QString(*dataBuffer));
         dataBuffer->clear();
@@ -90,24 +96,42 @@ void Crawler::parseResult()
                 pageTypes.push(pageMap["t"].toString());
             }
 
+            int tagMatch = 0;
             QJsonArray tags = map["tags"].toJsonArray();
             for (int i = 0; i < tags.size(); i++) {
                 QJsonObject objTag = tags.at(i).toObject();
                 QVariantMap tagMap = objTag.toVariantMap();
+
+                for (int eTag = 0; eTag < exclude.size(); eTag++) { //Exclude tags have higher priority than include tags.
+                    if(tagMap["name"].toString() == include.at(eTag)) goto ignoreItem; //Found exclude tag! Ignore this item
+                }
+                for (int iTag = 0; iTag < include.size(); iTag++) {
+                    if(tagMap["name"].toString() == include.at(iTag)) tagMatch++;
+                }
+
                 if(tagMap["type"].toString() == "language" && tagMap["name"].toString() != "translated"){
+                    if(itemLanguage != "" && tagMap["name"].toString() != itemLanguage) goto ignoreItem; //Language does not match! Ignore this item
                     itemInfo.language = tagMap["name"].toString();
-                    break;
+                    if(include.size() == 0 && exclude.size() == 0) break;
                 }
             }
 
-            itemInfo.id = seqCurrent;
-            itemInfo.mediaId = mediaId;
-            itemInfo.numberOfPages = nPages;
-            itemInfo.uploadDate = uploadDate;
-            itemInfo.title = titlePretty;
+            if(tagMatch == include.size()){
+                itemInfo.id = seqCurrent;
+                itemInfo.mediaId = mediaId;
+                itemInfo.numberOfPages = nPages;
+                itemInfo.uploadDate = uploadDate;
+                itemInfo.title = titlePretty;
 
-            emit parseCompleted();
-            Crawler::fetchMedia(pageTypes.top(),1,mediaId);
+                emit parseCompleted();
+                Crawler::fetchMedia(pageTypes.top(),1,mediaId);
+            } else {
+                ignoreItem:
+                emit collectionReceived();
+                QTimer::singleShot(5000,this,[=](){
+                    Crawler::getSource(++seqCurrent);
+                });
+            }
         }
     }
 }
@@ -122,7 +146,7 @@ void Crawler::fetchMedia(QString type, int pNumber, int mediaId)
     netReply = netManager->get(req);
     connect(netReply,&QNetworkReply::finished,this,[=](){
         if(netReply->error()){
-           qDebug() << "fetchMedia err: " << netReply->errorString();
+           qDebug() << "fetchMedia err: " << netReply->errorString(); //Todo: handle error
         } else {
             QByteArray res = netReply->readAll();
 
@@ -144,7 +168,7 @@ void Crawler::fetchMedia(QString type, int pNumber, int mediaId)
     });
 }
 
-Item Crawler::getCurrentItem()
+Item Crawler::getCurrentItem() const
 {
     return itemInfo;
 }
