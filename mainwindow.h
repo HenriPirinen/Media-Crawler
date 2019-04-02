@@ -25,6 +25,12 @@ private slots:
     void on_actionAbout_Qt_triggered();
     void on_actionQuit_triggered();
 
+    void on_actionCrawler_algorithm_triggered();
+
+    void on_radioSingleItem_clicked();
+
+    void on_radioBatch_clicked();
+
 signals:
     void nextItem(int index);
 

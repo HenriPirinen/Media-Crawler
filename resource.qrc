@@ -10,5 +10,6 @@
         <file>Style/style.css</file>
         <file>Icons/add.png</file>
         <file>Images/CrawlerSimple.png</file>
+        <file>Icons/cancel.png</file>
     </qresource>
 </RCC>

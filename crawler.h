@@ -15,7 +15,8 @@ class Crawler : public QObject
 public:
     explicit Crawler(QObject *parent = nullptr);
     ~Crawler();
-    void start();
+    void startBatch();
+    void startSingle(int id);
     void stop();
     void timeout();
     Item getCurrentItem() const;

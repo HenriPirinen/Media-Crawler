@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 {
     ui->setupUi(this);
     ui->infoTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->radioBatch->setChecked(true);
     this->setWindowTitle("Media Crawler");
 
     currentCollectionIdx = 0;
@@ -41,7 +42,7 @@ void MainWindow::on_actionStart_triggered()
     endIdx = settings.value("sequenceEnd",QVariant(0)).toInt();
     currentCollectionIdx = 0;
     ui->progressBar->setValue(0);
-    crawler->start();
+    crawler->startBatch();
 }
 
 void MainWindow::on_actionPause_triggered()
@@ -79,4 +80,19 @@ void MainWindow::addItem()
     ui->infoTable->setItem(ui->infoTable->rowCount() - 1,1, new QTableWidgetItem(curretItem.title));
     ui->infoTable->setItem(ui->infoTable->rowCount() - 1,2, new QTableWidgetItem(curretItem.language));
     ui->infoTable->setItem(ui->infoTable->rowCount() - 1,3, new QTableWidgetItem(QString::number(curretItem.uploadDate)));
+}
+
+void MainWindow::on_actionCrawler_algorithm_triggered()
+{
+
+}
+
+void MainWindow::on_radioSingleItem_clicked()
+{
+    ui->inputSingleItemId->setEnabled(true);
+}
+
+void MainWindow::on_radioBatch_clicked()
+{
+    ui->inputSingleItemId->setEnabled(false);
 }

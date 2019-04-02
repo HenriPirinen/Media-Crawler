@@ -22,11 +22,11 @@ Crawler::Crawler(QObject *parent) : QObject(parent){
 Crawler::~Crawler()
 {
     delete netReply;
-    delete[] dataBuffer;
+    delete dataBuffer;
     delete netManager;
 }
 
-void Crawler::start()
+void Crawler::startBatch()
 {
     qRegisterMetaTypeStreamOperators<QList<QString> >("QList<QString>");
 
@@ -46,6 +46,12 @@ void Crawler::start()
     settings.endGroup();
 
     getSource(seqCurrent);
+}
+
+void Crawler::startSingle(int id)
+{
+    //Todo
+    getSource(id);
 }
 
 void Crawler::getSource(int id = NULL)
